@@ -16,4 +16,4 @@ class CreatePersonOverriden(ArangoCreateMutation):
 
     def mutate(root, info, **kwargs):
         output = "All your mutate are override"
-        return CreatePerson(output=output)
+        return CreatePersonOverriden(output=output)

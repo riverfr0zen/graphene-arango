@@ -4,6 +4,7 @@ from graphene.types.mutation import MutationOptions
 from graphene.types import InputObjectType
 from graphene.utils.props import props
 from functools import partial
+from graphene_arango import logger
 
 
 class ArangoInsertMetadata(graphene.ObjectType):
@@ -36,7 +37,6 @@ class ArangoCreateMutation(graphene.Mutation):
         arguments.pop('id')
 
         # composing mutation fields here
-        setattr(cls, "output", graphene.String())
         setattr(cls, "metadata", graphene.Field(ArangoInsertMetadata))
         setattr(cls, "new", graphene.Field(type_class))
 
@@ -60,13 +60,10 @@ class ArangoCreateMutation(graphene.Mutation):
     def do_mutation(cls, root, info, **kwargs):
         collection = cls._meta.type_class._meta.collection
         metadata = collection.insert(kwargs, return_new=True)
+        # logger.debug(metadata)
         metadata['id'] = metadata.pop('_id')
         metadata['key'] = metadata.pop('_key')
         metadata['rev'] = metadata.pop('_rev')
         new = metadata.pop('new')
-        new['id'] = new.pop('_id')
-        new.pop('_key')
-        new.pop('_rev')
-        # print(metadata)
-        # print(new)
+        # logger.debug(new)
         return metadata, new

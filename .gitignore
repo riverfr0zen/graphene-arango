@@ -2,6 +2,7 @@
 *.coverage
 __pycache__
 .pytest_cache
-settings.py
 graphene_arango/tests/settings.py
+scratch.md
+settings.py
 venv

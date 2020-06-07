@@ -1,6 +1,6 @@
 import graphene
 from graphene.types.objecttype import ObjectType, ObjectTypeOptions
-# from davinciman_appserver import logger
+from graphene_arango import logger
 
 
 class GrapheneArangoException(Exception):
@@ -38,3 +38,6 @@ class ArangoCollectionType(ObjectType):
         super(ArangoCollectionType, cls).__init_subclass_with_meta__(
             _meta=_meta, **options
         )
+
+    def resolve_id(self, info):
+        return self['_id']

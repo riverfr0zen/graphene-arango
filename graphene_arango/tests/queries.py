@@ -87,5 +87,16 @@ introspect_mutations = '''
         }
     }
 '''
-
 introspect_mutations = f'{fragments}{introspect_mutations}'
+
+
+introspect_queries = '''
+    query IntrospectionQuery {
+        __schema {
+            queryType {
+                ...FullType
+            }
+        }
+    }
+'''
+introspect_queries = f'{fragments}{introspect_queries}'
