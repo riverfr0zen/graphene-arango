@@ -42,9 +42,8 @@ class ArangoCreateMutation(graphene.Mutation):
 
         # generic mutation method
         def mutate(root, info, **kwargs):
-            output = f"{kwargs['name']} was given"
             metadata, new = cls.do_mutation(root, info, **kwargs)
-            return cls(output=output, metadata=metadata, new=new)
+            return cls(metadata=metadata, new=new)
 
         resolver = None
         if not getattr(cls, 'mutate', None):

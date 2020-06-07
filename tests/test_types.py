@@ -6,12 +6,6 @@ from arango.database import StandardDatabase
 from arango.collection import StandardCollection
 
 
-@pytest.fixture
-def cleanup(test_db):
-    yield
-    assert test_db.delete_collection('test_people')
-
-
 def test_arango_collection_type_init(test_db, cleanup):
     # Testing for collection that does not exist yet
     class TestPersonType(ArangoCollectionType):

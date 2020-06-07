@@ -2,20 +2,15 @@ import pytest
 import graphene
 import json
 from graphene.test import Client
-from .mutations import CreateTestPerson
+from .mutations import CreateTestPerson, CreateTestPersonOverriden
 from .queries import introspect_mutations
-
-
-@pytest.fixture(scope='session')
-def cleanup(test_db):
-    yield
-    assert test_db.delete_collection('test_people')
 
 
 @pytest.fixture
 def schema(test_db):
     class Mutation(graphene.ObjectType):
         create_test_person = CreateTestPerson.Field()
+        create_test_person_overriden = CreateTestPersonOverriden.Field()
 
     schema = graphene.Schema(
         mutation=Mutation,
@@ -40,7 +35,6 @@ def test_arango_create_mutation(schema, cleanup):
     result = client.execute('''
         mutation {
             createTestPerson(name: "bozo", age: 42) {
-                output
                 metadata {
                     id
                     rev
@@ -54,4 +48,22 @@ def test_arango_create_mutation(schema, cleanup):
             }
         }
     ''')
-    print(result)
+    assert result['data']['createTestPerson']['metadata']['id']
+    assert result['data']['createTestPerson']['metadata']['key']
+    assert result['data']['createTestPerson']['metadata']['rev']
+    assert 'test_people/' in result['data']['createTestPerson']['new']['id']
+    assert result['data']['createTestPerson']['new']['name'] == 'bozo'
+    assert result['data']['createTestPerson']['new']['age'] == 42
+
+
+def test_arango_create_mutation_overriding(schema, cleanup):
+    client = Client(schema)
+    result = client.execute('''
+        mutation {
+            createTestPersonOverriden(name: "bozo", age: 42) {
+                output
+            }
+        }
+    ''')
+    output = result['data']['createTestPersonOverriden']['output']
+    assert 'All your base' in output
