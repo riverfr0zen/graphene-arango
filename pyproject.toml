@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "graphene-arango"
+version = "0.1.0"
+description = ""
+authors = ["Irfan Baig <riverfr0zen@elitemail.org>"]
+
+[tool.poetry.dependencies]
+python = "^3.8.1"
+python-arango = "^5.4.0"
+graphene = "^2.1.8"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^3.7.9"
+flask = "^1.1.1"
+flask-graphql = "^2.0.1"
+coverage = "^5.1"
+safety = "^1.9.0"
+pytest = "^5.4.2"
+pytest-cov = "^2.8.1"
+
+[build-system]
+requires = ["poetry>=1.0.0"]
+build-backend = "poetry.masonry.api"
