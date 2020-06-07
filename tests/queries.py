@@ -1,3 +1,8 @@
+#
+# @see https://atheros.ai/blog/graphql-introspection-and-introspection-queries
+#
+
+
 fragments = '''
     fragment FullType on __Type {
       kind

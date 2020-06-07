@@ -33,6 +33,7 @@ class ArangoCreateMutation(graphene.Mutation):
         arguments = {attr: maybe_type.__class__()
                      for attr, maybe_type in type_class_attrs
                      if isinstance(maybe_type, graphene.types.base.BaseType)}
+        arguments.pop('id')
 
         # compose mutation fields here
         setattr(cls, "output", graphene.String())
@@ -58,19 +59,15 @@ class ArangoCreateMutation(graphene.Mutation):
 
     @classmethod
     def do_mutation(cls, root, info, **kwargs):
-        print("---")
-        print(kwargs)
-        print(type(cls._meta.type_class._meta.collection))
-        print("---")
         collection = cls._meta.type_class._meta.collection
         metadata = collection.insert(kwargs, return_new=True)
         metadata['id'] = metadata.pop('_id')
         metadata['key'] = metadata.pop('_key')
         metadata['rev'] = metadata.pop('_rev')
         new = metadata.pop('new')
-        new.pop('_id')
+        new['id'] = new.pop('_id')
         new.pop('_key')
         new.pop('_rev')
         # print(metadata)
-        print(new)
+        # print(new)
         return metadata, new

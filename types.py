@@ -13,6 +13,8 @@ class ArangoCollectionTypeOptions(ObjectTypeOptions):
 
 
 class ArangoCollectionType(ObjectType):
+    id = graphene.ID()
+
     @classmethod
     def __init_subclass_with_meta__(cls, db=None, collection_name=None,
                                     _meta=None, **options):

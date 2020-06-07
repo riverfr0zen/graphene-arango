@@ -47,6 +47,7 @@ def test_arango_create_mutation(schema, cleanup):
                     key
                 },
                 new {
+                    id
                     name
                     age
                 }
