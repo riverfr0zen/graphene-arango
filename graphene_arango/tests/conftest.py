@@ -1,6 +1,20 @@
 import pytest
+import logging
 from .settings import CLIENT_CONF, DB_CONF
 from arango import ArangoClient
+
+
+#
+# Logging
+#
+LOG_LEVELS = {
+    'graphene-arango': logging.DEBUG,
+    'requests': logging.WARN,
+    'urllib3': logging.WARN,
+}
+logging.basicConfig(level=LOG_LEVELS['graphene-arango'])
+for litem in LOG_LEVELS.keys():
+    logging.getLogger(litem).setLevel(LOG_LEVELS[litem])
 
 
 def _test_db():
