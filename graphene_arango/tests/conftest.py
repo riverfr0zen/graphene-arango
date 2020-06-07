@@ -31,4 +31,4 @@ def test_db():
 @pytest.fixture(scope="session")
 def cleanup(test_db):
     yield
-    assert test_db.delete_collection('test_people')
+    assert test_db.delete_collection('people')

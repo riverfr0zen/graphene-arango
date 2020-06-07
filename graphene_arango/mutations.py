@@ -25,7 +25,7 @@ class ArangoCreateMutation(graphene.Mutation):
         _meta = ArangoMutationOptions(cls)
         _meta.type_class = type_class
 
-        # compose arguments here
+        # composing arguments here
         type_class_attrs = inspect.getmembers(
             type_class,
             lambda a: not(inspect.isroutine(a))
@@ -35,7 +35,7 @@ class ArangoCreateMutation(graphene.Mutation):
                      if isinstance(maybe_type, graphene.types.base.BaseType)}
         arguments.pop('id')
 
-        # compose mutation fields here
+        # composing mutation fields here
         setattr(cls, "output", graphene.String())
         setattr(cls, "metadata", graphene.Field(ArangoInsertMetadata))
         setattr(cls, "new", graphene.Field(type_class))

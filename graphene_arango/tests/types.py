@@ -6,10 +6,10 @@ from .conftest import _test_db
 db = _test_db()
 
 
-class TestPerson(ArangoCollectionType):
+class Person(ArangoCollectionType):
     class Meta:
         db = db
-        collection_name = 'test_people'
+        collection_name = 'people'
 
     name = graphene.String()
     age = graphene.Int()

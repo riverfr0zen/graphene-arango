@@ -11,23 +11,23 @@ def test_arango_collection_type_init(test_db, cleanup):
     class TestPersonType(ArangoCollectionType):
         class Meta:
             db = test_db
-            collection_name = 'test_people'
+            collection_name = 'people'
 
     assert isinstance(TestPersonType._meta.db, StandardDatabase)
     db = TestPersonType._meta.db
-    test_people = db.collection('test_people')
-    assert isinstance(test_people, StandardCollection)
+    people = db.collection('people')
+    assert isinstance(people, StandardCollection)
 
     # Testing for collection that already exists
     class TestPersonType2(ArangoCollectionType):
         class Meta:
             db = test_db
-            collection_name = 'test_people'
+            collection_name = 'people'
 
     assert isinstance(TestPersonType2._meta.db, StandardDatabase)
     db = TestPersonType2._meta.db
-    test_people = db.collection('test_people')
-    assert isinstance(test_people, StandardCollection)
+    people = db.collection('people')
+    assert isinstance(people, StandardCollection)
 
 
 def test_passing_invalid_meta_in_subclasses(test_db):

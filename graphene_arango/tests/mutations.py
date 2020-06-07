@@ -1,19 +1,19 @@
 import graphene
 from ..mutations import ArangoCreateMutation
-from .types import TestPerson
+from .types import Person
 
 
-class CreateTestPerson(ArangoCreateMutation):
+class CreatePerson(ArangoCreateMutation):
     class Meta:
-        type_class = TestPerson
+        type_class = Person
 
 
-class CreateTestPersonOverriden(ArangoCreateMutation):
+class CreatePersonOverriden(ArangoCreateMutation):
     class Meta:
-        type_class = TestPerson
+        type_class = Person
 
     output = graphene.String()
 
     def mutate(root, info, **kwargs):
-        output = "All your base is overriden"
-        return CreateTestPerson(output=output)
+        output = "All your mutate are override"
+        return CreatePerson(output=output)
