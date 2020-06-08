@@ -2,7 +2,8 @@ import pytest
 import graphene
 import json
 from graphene.test import Client
-from .mutations import CreatePerson, CreatePersonOverriden
+from .mutations import CreatePerson, CreatePersonOverriden, \
+                       CreatePersonOverriden2
 from .queries import introspect_mutations
 from graphene_arango import logger
 
@@ -12,6 +13,7 @@ def schema(test_db):
     class Mutation(graphene.ObjectType):
         create_person = CreatePerson.Field()
         create_person_overriden = CreatePersonOverriden.Field()
+        create_person_overriden2 = CreatePersonOverriden2.Field()
 
     schema = graphene.Schema(
         mutation=Mutation,
@@ -69,3 +71,14 @@ def test_arango_create_mutation_overriding(schema, cleanup):
     output = result['data']['createPersonOverriden']['output']
     logger.debug(output)
     assert 'All your mutates are' in output
+
+    result = client.execute('''
+        mutation {
+            createPersonOverriden2(name: "bozo", age: 42) {
+                myNewField
+            }
+        }
+    ''')
+    logger.debug(result)
+    my_new_field = result['data']['createPersonOverriden2']['myNewField']
+    assert 'Override by bozo' in my_new_field
