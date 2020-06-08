@@ -37,17 +37,16 @@ class ArangoInsertMutation(graphene.Mutation):
         arguments.pop('id')
 
         # composing mutation fields here
-        setattr(cls, "metadata", graphene.Field(ArangoInsertMetadata))
-        setattr(cls, "new", graphene.Field(type_class))
+        cls.set_mutation_fields(type_class)
 
-        # generic mutation method
-        def mutate(root, info, **kwargs):
-            metadata, new = cls.do_mutation(root, info, **kwargs)
-            return cls(metadata=metadata, new=new)
+        # # generic mutation method
+        # def mutate(root, info, **kwargs):
+        #     metadata, new = cls.do_mutation(root, info, **kwargs)
+        #     return cls(metadata=metadata, new=new)
 
-        resolver = None
-        if not getattr(cls, 'mutate', None):
-            resolver = mutate
+        resolver = getattr(cls, 'mutate', None)
+        if not resolver:
+            resolver = cls.default_resolver
 
         super().__init_subclass_with_meta__(
             _meta=_meta,
@@ -57,7 +56,12 @@ class ArangoInsertMutation(graphene.Mutation):
         )
 
     @classmethod
-    def do_mutation(cls, root, info, **kwargs):
+    def set_mutation_fields(cls, type_class):
+        setattr(cls, "metadata", graphene.Field(ArangoInsertMetadata))
+        setattr(cls, "new", graphene.Field(type_class))
+
+    @classmethod
+    def default_resolver(cls, root, info, **kwargs):
         collection = cls._meta.type_class._meta.collection
         metadata = collection.insert(kwargs, return_new=True)
         # logger.debug(metadata)
@@ -66,4 +70,4 @@ class ArangoInsertMutation(graphene.Mutation):
         metadata['rev'] = metadata.pop('_rev')
         new = metadata.pop('new')
         # logger.debug(new)
-        return metadata, new
+        return cls(metadata=metadata, new=new)

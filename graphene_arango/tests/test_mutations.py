@@ -4,6 +4,7 @@ import json
 from graphene.test import Client
 from .mutations import CreatePerson, CreatePersonOverriden
 from .queries import introspect_mutations
+from graphene_arango import logger
 
 
 @pytest.fixture
@@ -66,4 +67,5 @@ def test_arango_create_mutation_overriding(schema, cleanup):
         }
     ''')
     output = result['data']['createPersonOverriden']['output']
-    assert 'All your mutate are' in output
+    logger.debug(output)
+    assert 'All your mutates are' in output

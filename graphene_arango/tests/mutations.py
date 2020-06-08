@@ -15,5 +15,5 @@ class CreatePersonOverriden(ArangoInsertMutation):
     output = graphene.String()
 
     def mutate(root, info, **kwargs):
-        output = "All your mutate are override"
+        output = "All your mutates are override by us"
         return CreatePersonOverriden(output=output)
