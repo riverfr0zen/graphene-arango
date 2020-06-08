@@ -39,13 +39,12 @@ class ArangoInsertMutation(graphene.Mutation):
         # composing mutation fields here
         cls.set_mutation_fields(type_class)
 
-        # # generic mutation method
-        # def mutate(root, info, **kwargs):
-        #     metadata, new = cls.do_mutation(root, info, **kwargs)
-        #     return cls(metadata=metadata, new=new)
-
-        resolver = getattr(cls, 'mutate', None)
-        if not resolver:
+        # assign resolver
+        # @TODO test that resolver can be passed through options, or done
+        # inline by declaring a mutate method, and that it otherwise finally
+        # resorts to default_resolver
+        resolver = options.pop('resolver', None)
+        if not resolver and not getattr(cls, 'mutate', None):
             resolver = cls.default_resolver
 
         super().__init_subclass_with_meta__(
