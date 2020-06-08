@@ -1,14 +1,14 @@
 import graphene
-from ..mutations import ArangoCreateMutation
+from ..mutations import ArangoInsertMutation
 from .types import Person
 
 
-class CreatePerson(ArangoCreateMutation):
+class CreatePerson(ArangoInsertMutation):
     class Meta:
         type_class = Person
 
 
-class CreatePersonOverriden(ArangoCreateMutation):
+class CreatePersonOverriden(ArangoInsertMutation):
     class Meta:
         type_class = Person
 

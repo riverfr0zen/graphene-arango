@@ -17,7 +17,7 @@ class ArangoMutationOptions(MutationOptions):
     type_class = None
 
 
-class ArangoCreateMutation(graphene.Mutation):
+class ArangoInsertMutation(graphene.Mutation):
     class Meta:
         abstract = True
 
