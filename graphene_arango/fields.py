@@ -1,9 +1,12 @@
+import graphene
 from functools import partial
-from graphene.types import Field, List, NonNull
+from graphene.types import Field, List, NonNull, Argument
 
 
 class ArangoListField(Field):
     def __init__(self, _type, *args, **kwargs):
+        #XXX just a note on constructing field arguments !
+        #kwargs.setdefault('hi', Argument(_type))
         super().__init__(List(_type), *args, **kwargs)
 
     @staticmethod

@@ -40,9 +40,6 @@ class ArangoInsertMutation(graphene.Mutation):
         cls.set_mutation_fields(type_class)
 
         # assign resolver
-        # @TODO test that resolver can be passed through options, or done
-        # inline by declaring a mutate method, and that it otherwise finally
-        # resorts to default_resolver
         resolver = options.pop('resolver', None)
         if not resolver and not getattr(cls, 'mutate', None):
             resolver = cls.default_resolver
