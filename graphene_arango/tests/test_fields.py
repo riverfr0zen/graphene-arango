@@ -19,7 +19,7 @@ def schema(test_db):
     yield schema
 
 
-def test_arango_list_field_field(schema, cleanup):
+def test_arango_list_field_all_resolve_method_args(schema, cleanup):
     client = Client(schema)
     result = client.execute(introspect_queries)
     logger.debug(json.dumps(result, indent=4, sort_keys=True))
@@ -31,7 +31,7 @@ def test_arango_list_field_field(schema, cleanup):
     # assert mut_def['args'][1]['name'] == 'name'
 
 
-def test_arango_list_field(schema, cleanup):
+def test_arango_list_field_all_resolve_method(schema, cleanup):
     inserted = Person._meta.collection.insert_many(
         [{'name': 'bozo', 'age': 50},
          {'name': 'pennywise', 'age': 200},
@@ -50,5 +50,6 @@ def test_arango_list_field(schema, cleanup):
             }
         }
     ''')
+    logger.debug(result)
     assert len(result['data']['testPeople']) == 3
     # logger.debug(result)
