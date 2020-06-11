@@ -2,7 +2,7 @@ import graphene
 from collections import OrderedDict
 from graphene.types.argument import to_arguments
 from functools import partial
-from graphene.types import Field, List, NonNull, Argument
+from graphene.types import Field, List
 from graphene_arango import logger
 
 
