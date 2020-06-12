@@ -2,15 +2,29 @@ import graphene
 from collections import OrderedDict
 from graphene.types.argument import to_arguments
 from functools import partial
-from graphene.types import Field, List
+from graphene.types import Field, List, NonNull
 from graphene_arango import logger
+from .types import ArangoCollectionType
 
 
 class ArangoListField(Field):
-    def __init__(self, _type, resolve_with="all", *args, **kwargs):
+    def __init__(self, _type, resolve_with="all", resolve_to_object_type=False,
+                 *args, **kwargs):
         self.resolve_with = resolve_with
+        self.resolve_to_object_type = resolve_to_object_type
         self._base_args = None
-        super().__init__(List(_type), *args, **kwargs)
+        super().__init__(_type, *args, **kwargs)
+
+    @property
+    def type(self):
+        _type = super().type
+        if self.resolve_to_object_type:
+            return type(f"{_type._meta.name}ListResults",
+                        (graphene.ObjectType, NonNull),
+                        {"docs": graphene.List(_type),
+                         "total": graphene.Int()})
+        else:
+            return List(_type)
 
     @property
     def args(self):
@@ -29,13 +43,18 @@ class ArangoListField(Field):
         }
 
     @staticmethod
-    def all_resolver(arango_coll_type, resolver,
+    def all_resolver(arango_coll_type, to_object_type, resolver,
                      root, info, **kwargs):
-        logger.debug(kwargs)
+        if to_object_type:
+            return {
+                "docs": arango_coll_type._meta.collection.all(**kwargs),
+                "total": arango_coll_type._meta.collection.count()
+            }
         return arango_coll_type._meta.collection.all(**kwargs)
 
     def get_resolver(self, parent_resolver):
         if self.resolve_with == 'all':
             return partial(self.all_resolver,
-                           self.type.of_type,
+                           super().type,
+                           self.resolve_to_object_type,
                            parent_resolver)

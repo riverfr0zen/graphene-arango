@@ -39,5 +39,9 @@ class ArangoCollectionType(ObjectType):
             _meta=_meta, **options
         )
 
+    @classmethod
+    def of_type(self):
+        return self.__class__
+
     def resolve_id(self, info):
         return self['_id']

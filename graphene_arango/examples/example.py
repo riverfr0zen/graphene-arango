@@ -7,6 +7,8 @@ from graphene_arango.fields import ArangoListField
 
 class Query(graphene.ObjectType):
     test_people = ArangoListField(types.Person)
+    test_people_obj = ArangoListField(types.Person,
+                                      resolve_to_object_type=True)
 
 
 class Mutation(graphene.ObjectType):
@@ -24,7 +26,7 @@ def create_app(test_config=None):
 
     schema = graphene.Schema(
         query=Query,
-        mutation=Mutation
+        mutation=Mutation,
     )
 
     app.add_url_rule(
