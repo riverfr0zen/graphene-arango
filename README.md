@@ -4,7 +4,7 @@ This package is in very early development. For now, please see the [tests](graph
 
 * Copy/modify `graphene_arango/tests/settings_example.py` to `graphene_arango/tests/settings.py`. You will also have to create a database per the settings.
 
-* Make sure you've installed all dependencies (including dev dependencies) using your python package manager. You can find the dependencies in `pyproject.toml`
+* Make sure you've installed all dependencies (including dev dependencies) using your python package manager. You can find the dependencies in [pyproject.toml](pyproject.toml)
 
 To run tests:
 ```
