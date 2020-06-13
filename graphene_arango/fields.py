@@ -5,6 +5,7 @@ from functools import partial
 from graphene.types import Field, List, NonNull
 from graphene_arango import logger
 from .types import ArangoCollectionType
+from .utils.info import get_fields
 
 
 class ArangoListField(Field):
@@ -46,9 +47,16 @@ class ArangoListField(Field):
     def all_resolver(arango_coll_type, to_object_type, resolver,
                      root, info, **kwargs):
         if to_object_type:
+            requested_fields = get_fields(info)
+            docs = None
+            total = None
+            if 'docs' in requested_fields:
+                docs = arango_coll_type._meta.collection.all(**kwargs)
+            if 'total' in requested_fields:
+                total = arango_coll_type._meta.collection.count()
             return {
-                "docs": arango_coll_type._meta.collection.all(**kwargs),
-                "total": arango_coll_type._meta.collection.count()
+                "docs": docs,
+                "total": total
             }
         return arango_coll_type._meta.collection.all(**kwargs)
 

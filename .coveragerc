@@ -1,0 +1,4 @@
+[run]
+omit =
+    graphene_arango/examples/*
+    graphene_arango/utils/info.py
