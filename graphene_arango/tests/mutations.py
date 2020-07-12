@@ -21,7 +21,7 @@ class CreatePersonOverriden(ArangoInsertMutation):
 
 def some_resolver_func(root, info, **kwargs):
     """ For testing CreatePersonOverriden2 below """
-    out = f"Override by {kwargs['name']}"
+    out = f"Override by {kwargs['doc']['name']}"
     return CreatePersonOverriden2(my_new_field=out)
 
 

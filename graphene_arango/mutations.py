@@ -5,6 +5,7 @@ from graphene.types import InputObjectType
 from graphene.utils.props import props
 from functools import partial
 from graphene_arango import logger
+from .utils.info import get_fields
 
 
 class ArangoInsertMetadata(graphene.ObjectType):
@@ -22,19 +23,34 @@ class ArangoInsertMutation(graphene.Mutation):
         abstract = True
 
     @classmethod
-    def __init_subclass_with_meta__(cls, type_class, **options):
-        _meta = ArangoMutationOptions(cls)
-        _meta.type_class = type_class
-
-        # composing arguments here
+    def _get_input_type_class(cls, type_class):
         type_class_attrs = inspect.getmembers(
             type_class,
             lambda a: not(inspect.isroutine(a))
         )
-        arguments = {attr: maybe_type.__class__()
-                     for attr, maybe_type in type_class_attrs
-                     if isinstance(maybe_type, graphene.types.base.BaseType)}
-        arguments.pop('id')
+        fields = {attr: maybe_type.__class__()
+                  for attr, maybe_type in type_class_attrs
+                  if isinstance(maybe_type, graphene.types.base.BaseType)}
+        return type(f"{cls.__name__}Doc",
+                    (InputObjectType,),
+                    fields)
+
+    @classmethod
+    def compose_arguments(cls, type_class):
+        return {
+            "doc": graphene.Argument(cls._get_input_type_class(type_class)),
+            "overwrite": graphene.Boolean()
+        }
+
+    @classmethod
+    def __init_subclass_with_meta__(cls, type_class, **options):
+        _meta = ArangoMutationOptions(cls)
+        _meta.type_class = type_class
+
+        # compose arguments
+        arguments = options.pop('arguments', None)
+        if not arguments:
+            arguments = cls.compose_arguments(type_class)
 
         # composing mutation fields here
         cls.set_mutation_fields(type_class)
@@ -55,15 +71,38 @@ class ArangoInsertMutation(graphene.Mutation):
     def set_mutation_fields(cls, type_class):
         setattr(cls, "metadata", graphene.Field(ArangoInsertMetadata))
         setattr(cls, "new", graphene.Field(type_class))
+        setattr(cls, "old", graphene.Field(type_class))
 
     @classmethod
     def default_resolver(cls, root, info, **kwargs):
+        doc = kwargs.pop('doc')
+        if 'id' in doc:
+            doc['_id'] = doc.pop('id')
+        if 'key' in doc:
+            doc['_key'] = doc.pop('key')
+
+        overwrite = kwargs.pop('overwrite', False)
+
+        return_new = False
+        return_old = False
+        requested_fields = get_fields(info)
+        if 'new' in requested_fields.keys():
+            return_new = True
+        if 'old' in requested_fields.keys():
+            return_old = True
+        # logger.debug(requested_fields)
+
         collection = cls._meta.type_class._meta.collection
-        metadata = collection.insert(kwargs, return_new=True)
+        metadata = collection.insert(doc,
+                                     sync=True,
+                                     overwrite=overwrite,
+                                     return_new=return_new,
+                                     return_old=return_old)
         # logger.debug(metadata)
         metadata['id'] = metadata.pop('_id')
         metadata['key'] = metadata.pop('_key')
         metadata['rev'] = metadata.pop('_rev')
-        new = metadata.pop('new')
+        new = metadata.pop('new', None)
+        old = metadata.pop('old', None)
         # logger.debug(new)
-        return cls(metadata=metadata, new=new)
+        return cls(metadata=metadata, new=new, old=old)

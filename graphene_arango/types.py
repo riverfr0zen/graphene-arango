@@ -14,6 +14,7 @@ class ArangoCollectionTypeOptions(ObjectTypeOptions):
 
 class ArangoCollectionType(ObjectType):
     id = graphene.ID()
+    key = graphene.String()
 
     @classmethod
     def __init_subclass_with_meta__(cls, db=None, collection_name=None,
@@ -41,3 +42,6 @@ class ArangoCollectionType(ObjectType):
 
     def resolve_id(self, info):
         return self['_id']
+
+    def resolve_key(self, info):
+        return self['_key']
