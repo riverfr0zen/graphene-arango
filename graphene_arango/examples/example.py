@@ -26,7 +26,7 @@ def create_app(test_config=None):
 
     schema = graphene.Schema(
         query=Query,
-        mutation=Mutation,
+        mutation=Mutation
     )
 
     app.add_url_rule(

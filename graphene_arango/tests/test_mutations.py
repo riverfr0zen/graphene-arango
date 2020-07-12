@@ -3,7 +3,7 @@ import graphene
 import json
 from graphene.test import Client
 from graphene.types import InputObjectType
-from .types import Person
+from .types import Person, Outfit
 from .mutations import CreatePerson, CreatePersonOverriden, \
                        CreatePersonOverriden2
 from .queries import introspect_mutations
@@ -29,10 +29,19 @@ def test_get_input_type_class():
     assert doc_class.__name__ == 'CreatePersonDoc'
     assert 'id' in doc_class._meta.fields
     assert doc_class._meta.fields['id'].type == graphene.ID
+    assert 'key' in doc_class._meta.fields
+    assert doc_class._meta.fields['key'].type == graphene.String
+    assert 'is_clown' in doc_class._meta.fields
+    assert doc_class._meta.fields['is_clown'].type == graphene.Boolean
     assert 'name' in doc_class._meta.fields
     assert doc_class._meta.fields['name'].type == graphene.String
     assert 'age' in doc_class._meta.fields
     assert doc_class._meta.fields['age'].type == graphene.Int
+    assert 'aliases' in doc_class._meta.fields
+    assert doc_class._meta.fields['aliases'].type.__class__ == graphene.types.structures.List
+    assert doc_class._meta.fields['aliases'].type.of_type == graphene.String
+    # @TODO figure out how to test this
+    assert 'outfit' in doc_class._meta.fields
 
 
 def test_arango_insert_mutation_field(schema, cleanup):

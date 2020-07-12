@@ -23,15 +23,33 @@ class ArangoInsertMutation(graphene.Mutation):
         abstract = True
 
     @classmethod
-    def _get_input_type_class(cls, type_class):
+    def _get_attr_field(cls, maybe_type):
+        if isinstance(maybe_type, graphene.types.field.Field):
+            return cls._get_input_type_class(
+                    maybe_type.type,
+                    name_suffix=str(maybe_type.type)
+            )()
+        if isinstance(maybe_type, graphene.types.base.BaseType):
+            return maybe_type.__class__()
+        if isinstance(maybe_type, graphene.types.structures.Structure):
+            return maybe_type.__class__(maybe_type.of_type)
+
+    @classmethod
+    def _get_input_type_class(cls, type_class, name_suffix=''):
         type_class_attrs = inspect.getmembers(
             type_class,
             lambda a: not(inspect.isroutine(a))
         )
-        fields = {attr: maybe_type.__class__()
-                  for attr, maybe_type in type_class_attrs
-                  if isinstance(maybe_type, graphene.types.base.BaseType)}
-        return type(f"{cls.__name__}Doc",
+        fields = {
+            attr: cls._get_attr_field(maybe_type)
+            for attr, maybe_type in type_class_attrs
+            if (
+                isinstance(maybe_type, graphene.types.field.Field) or
+                isinstance(maybe_type, graphene.types.base.BaseType) or
+                isinstance(maybe_type, graphene.types.structures.Structure)
+            )
+        }
+        return type(f"{cls.__name__}{name_suffix}Doc",
                     (InputObjectType,),
                     fields)
 
