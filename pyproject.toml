@@ -14,11 +14,11 @@ flake8 = "^3.7.9"
 flask-graphql = "^2.0.1"
 coverage = "^5.1"
 safety = "^1.9.0"
-pytest = "^5.4.2"
 pytest-cov = "^2.8.1"
 
 [tool.poetry.group.dev.dependencies]
 flask = "2.3.2"
+pytest = "^7.3.1"
 
 [build-system]
 requires = ["poetry>=1.0.0"]
