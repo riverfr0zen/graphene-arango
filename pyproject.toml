@@ -11,12 +11,14 @@ graphene = "^2.1.8"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.7.9"
-flask = "^1.1.1"
 flask-graphql = "^2.0.1"
 coverage = "^5.1"
 safety = "^1.9.0"
 pytest = "^5.4.2"
 pytest-cov = "^2.8.1"
+
+[tool.poetry.group.dev.dependencies]
+flask = "2.3.2"
 
 [build-system]
 requires = ["poetry>=1.0.0"]
